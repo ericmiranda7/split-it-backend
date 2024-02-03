@@ -7,6 +7,8 @@ import (
 )
 
 func InitHandlers(handlers []http.Handler) {
+	// todo(eric): diff between get, post, put?
+
 	http.Handle("/api/health", NecessaryMiddleware(http.HandlerFunc(healthHandler)))
 	http.Handle("/", NecessaryMiddleware(http.HandlerFunc(rootHandler)))
 	log.Println(handlers[0])
