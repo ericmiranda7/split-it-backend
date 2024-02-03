@@ -1,13 +1,20 @@
-package controller
+package controllers
 
 import (
+	"log"
 	"net/http"
 	"split-that.com/split-that/v2/src/logger"
 )
 
-func InitHandlers() {
+func InitHandlers(handlers []http.Handler) {
 	http.Handle("/api/health", NecessaryMiddleware(http.HandlerFunc(healthHandler)))
 	http.Handle("/", NecessaryMiddleware(http.HandlerFunc(rootHandler)))
+	log.Println(handlers[0])
+
+	for _, handler := range handlers {
+		// todo(eric): remove hardcode api endpoint
+		http.Handle("/api/user", NecessaryMiddleware(handler))
+	}
 }
 
 func NecessaryMiddleware(next http.Handler) http.Handler {
