@@ -6,11 +6,11 @@ import (
 )
 
 func InitHandlers() {
-	http.Handle("/api/health", necessaryMiddleware(http.HandlerFunc(healthHandler)))
-	http.Handle("/api", necessaryMiddleware(http.HandlerFunc(rootHandler)))
+	http.Handle("/api/health", NecessaryMiddleware(http.HandlerFunc(healthHandler)))
+	http.Handle("/", NecessaryMiddleware(http.HandlerFunc(rootHandler)))
 }
 
-func necessaryMiddleware(next http.Handler) http.Handler {
+func NecessaryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info.Println("Received request at", r.URL)
 		// TODO(eric): be strict
@@ -28,8 +28,8 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("20"))
+	w.WriteHeader(http.StatusNotFound)
+	_, err := w.Write([]byte("Hmm, not quite sure what you're looking for here."))
 	if err != nil {
 		logger.Error.Println(err)
 	}
