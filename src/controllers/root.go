@@ -28,7 +28,7 @@ func NecessaryMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
+func healthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte("Healthy af"))
 	if err != nil {
@@ -36,7 +36,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
+func rootHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	_, err := w.Write([]byte("Hmm, not quite sure what you're looking for here."))
 	if err != nil {
