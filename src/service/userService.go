@@ -11,15 +11,17 @@ type UserService struct {
 	conn *pgx.Conn
 }
 
+func GetUserService(conn *pgx.Conn) *UserService {
+	if userService == nil {
+		initUserService(conn)
+	}
+	return userService
+}
+
 func initUserService(conn *pgx.Conn) {
 	userService = &UserService{
 		conn: conn,
 	}
-}
-
-func GetUserService(conn *pgx.Conn) *UserService {
-	initUserService(conn)
-	return userService
 }
 
 func (us *UserService) CreateUser(name string) (bool, error) {

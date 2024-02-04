@@ -11,10 +11,8 @@ func InitHandlers(handlers []http.Handler) {
 	http.Handle("/api/health", NecessaryMiddleware(http.HandlerFunc(healthHandler)))
 	http.Handle("/", NecessaryMiddleware(http.HandlerFunc(rootHandler)))
 
-	for _, handler := range handlers {
-		// todo(eric): remove hardcode api endpoint
-		http.Handle("/api/user", NecessaryMiddleware(handler))
-	}
+	http.Handle("/api/user", NecessaryMiddleware(handlers[0]))
+	http.Handle("/api/accounts/", NecessaryMiddleware(handlers[1]))
 }
 
 func NecessaryMiddleware(next http.Handler) http.Handler {

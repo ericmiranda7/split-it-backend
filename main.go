@@ -35,8 +35,11 @@ func main() {
 	conn := database.GetDb(connString)
 	us := service.GetUserService(conn)
 	uc := controllers.GetUserController(us)
+	as := service.GetAccountService(conn)
+	ac := controllers.GetAccountController(as)
 	var handlers []http.Handler
 	handlers = append(handlers, http.HandlerFunc(uc.UserHandler))
+	handlers = append(handlers, http.HandlerFunc(ac.GetAccountHandler))
 	controllers.InitHandlers(handlers)
 
 	fmt.Println("Running server on port:", serverPort)
