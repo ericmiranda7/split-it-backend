@@ -1,10 +1,8 @@
 package controllers
 
 import (
-	"context"
-	"golang.org/x/oauth2"
-	goauth2 "google.golang.org/api/oauth2/v2"
-	"google.golang.org/api/option"
+	"github.com/golang-jwt/jwt/v4"
+	"log"
 	"net/http"
 	"split-that.com/split-that/v2/src/logger"
 	"split-that.com/split-that/v2/src/service"
@@ -29,35 +27,20 @@ func initializeAuthController(as *service.AuthService) *AuthController {
 }
 
 func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request) {
-	authCode := r.FormValue("code")
-
-	// exchange code for access token
-	token, err := ac.as.Cfg.Exchange(context.TODO(), authCode)
+	jwtToken := r.FormValue("credential")
+	token, err := jwt.Parse(jwtToken, nil)
 	if err != nil {
-		logger.Error.Println("Error while exchanging for token with:", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// get userprof details from token
-	client := oauth2.NewClient(context.TODO(), ac.as.Cfg.TokenSource(context.TODO(), token))
-	srv, err := goauth2.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		logger.Error.Println("Error while creating service with client with:", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		logger.Info.Println("Name is", claims["name"])
+	} else {
+		log.Printf("Invalid JWT Token")
+		http.Error(w, "Invalid JWT Token", http.StatusUnauthorized)
 	}
-
-	userInfo, err := srv.Userinfo.Get().Do()
-	if err != nil {
-		logger.Error.Println("Cannot get userInfo with ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	logger.Info.Println("USERINFO IS: ", userInfo.Name, userInfo.Id)
-
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte(userInfo.Email))
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write([]byte(`{"status": "success", "user": {...}}`))
 	if err != nil {
 		return
 	}
