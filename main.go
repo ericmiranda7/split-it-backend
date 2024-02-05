@@ -37,9 +37,12 @@ func main() {
 	uc := controllers.GetUserController(us)
 	as := service.GetAccountService(conn)
 	ac := controllers.GetAccountController(as)
+	authS := service.GetAuthService()
+	authC := controllers.GetAuthController(authS)
 	var handlers []http.Handler
 	handlers = append(handlers, http.HandlerFunc(uc.UserHandler))
 	handlers = append(handlers, http.HandlerFunc(ac.GetAccountHandler))
+	handlers = append(handlers, http.HandlerFunc(authC.GetOauthHandler))
 	controllers.InitHandlers(handlers)
 
 	fmt.Println("Running server on port:", serverPort)

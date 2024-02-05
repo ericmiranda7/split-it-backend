@@ -24,6 +24,5 @@ func initAccountService(conn *pgx.Conn) *AccountService {
 }
 
 func (as *AccountService) GetTotalOwe(user models.User) float64 {
-	println("lols")
 	return -2.3
 }

@@ -13,6 +13,7 @@ func InitHandlers(handlers []http.Handler) {
 
 	http.Handle("/api/user", NecessaryMiddleware(handlers[0]))
 	http.Handle("/api/accounts/", NecessaryMiddleware(handlers[1]))
+	http.Handle("/api/auth", NecessaryMiddleware(handlers[2]))
 }
 
 func NecessaryMiddleware(next http.Handler) http.Handler {
