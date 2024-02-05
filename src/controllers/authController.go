@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"os"
 	"split-that.com/split-that/v2/src/constants"
 	"split-that.com/split-that/v2/src/logger"
 	"split-that.com/split-that/v2/src/service"
+	"split-that.com/split-that/v2/src/util"
 )
 
 type AuthController struct {
@@ -32,19 +32,9 @@ func initializeAuthController(as *service.AuthService, us *service.UserService) 
 func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request) {
 	// todo(): probably validate the token from google
 	jwtToken := r.FormValue("credential")
-	token, _, err := new(jwt.Parser).ParseUnverified(jwtToken, jwt.MapClaims{})
-
+	claims, err := util.GetClaims(jwtToken)
 	if err != nil {
-		logger.Error.Println("Error parsing JWT Token", err.Error())
-		return
-	}
-
-	var claims jwt.MapClaims
-	var ok bool
-	if claims, ok = token.Claims.(jwt.MapClaims); !ok {
-		logger.Error.Println("Invalid JWT token")
-		http.Error(w, "Invalid JWT Token", http.StatusUnauthorized)
-		return
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 	}
 
 	name := claims["name"].(string)
