@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"net/http"
+	"os"
+	"split-that.com/split-that/v2/src/constants"
 	"split-that.com/split-that/v2/src/logger"
 	"split-that.com/split-that/v2/src/util"
 )
@@ -22,7 +24,8 @@ func necessaryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info.Println("Received request at", r.URL)
 		// TODO(eric): be strict
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", os.Getenv(constants.FrontendRedirectURL))
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		next.ServeHTTP(w, r)
 	})

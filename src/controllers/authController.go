@@ -57,7 +57,7 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 		Path:     "/",
 	}
 	http.SetCookie(w, cookie)
-	redirectUrl := os.Getenv(constants.FrontendRedirectURL) + fmt.Sprintf("login?name=%s", name)
+	redirectUrl := os.Getenv(constants.FrontendRedirectURL) + fmt.Sprintf("/login?name=%s", name)
 	http.Redirect(w, r, redirectUrl, http.StatusSeeOther)
 
 	if err != nil {
