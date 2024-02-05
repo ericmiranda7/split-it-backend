@@ -17,6 +17,11 @@ $ air
 ```
 
 ## Running in the cloud
+### Compute
 Google cloud's Google Cloud Run is used for running the app as a container.  
 Google Cloud Build is triggered on a push to the `prod` branch.  
 The app is available at https://split-it-backend-6vxkdevw6q-de.a.run.app
+### Database
+Currently we're on Render, however the free tier expires after around 1st week of may I think.  
+Probably self host on a raspberry pi because no cloud solutions beside oracle seem to provide
+free RDS :'(
