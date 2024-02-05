@@ -28,16 +28,17 @@ func initializeAuthController(as *service.AuthService) *AuthController {
 
 func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request) {
 	jwtToken := r.FormValue("credential")
-	token, err := jwt.Parse(jwtToken, nil)
+	token, _, err := new(jwt.Parser).ParseUnverified(jwtToken, jwt.MapClaims{})
+
 	if err != nil {
 		logger.Error.Println("Error parsing JWT Token", err.Error())
 		return
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		logger.Info.Println("Name is", claims["name"])
 	} else {
-		log.Printf("Invalid JWT Token")
+		log.Printf("Invalid JWT Token", claims, ok)
 		http.Error(w, "Invalid JWT Token", http.StatusUnauthorized)
 	}
 	w.Header().Set("Content-Type", "application/json")
