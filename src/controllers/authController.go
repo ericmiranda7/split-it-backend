@@ -30,6 +30,7 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 	jwtToken := r.FormValue("credential")
 	token, err := jwt.Parse(jwtToken, nil)
 	if err != nil {
+		logger.Error.Println("Error parsing JWT Token", err.Error())
 		return
 	}
 
