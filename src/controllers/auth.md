@@ -5,4 +5,5 @@
 3. google oauth server sends a PUT request to redirect_uri with 'credential' containing a token
 4. Backend processes the said token and extracts required info from it
 5. Ideally the backend would sign and send back its own jwt token which would henceforth be included in all frontend requests. But currently the same token is sent back to frontend
-6. Once the user is created / verified the backend redirects to frontend/login?token=&name=
+6. Once the user is created / verified the backend redirects to frontend/login and sets a cookie named `auth` with value as jwt
+7. henceforth the cookie is sent with every frontend request (where necessary)
