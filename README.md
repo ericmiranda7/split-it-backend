@@ -5,8 +5,8 @@ backend for split it written in Go
 1. Fill in the necessary ENV vars and create a file named `.env` in the root of the repo
 ```dotenv
 SERVER_PORT= # eg. 8080
-ENV=dev
-LOCAL_PG_CONN_STRING= # eg. "postgres://postgres:postgres@localhost:5435/splitthat"
+PG_CONN_STRING= # eg. "postgres://postgres:postgres@localhost:5435/splitthat"
+FRONTEND_REDIRECT_URL= # eg. "http://localhost:5173"
 ```
 2. Run the following commands
 ```shell

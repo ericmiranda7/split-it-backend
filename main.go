@@ -19,18 +19,12 @@ func main() {
 	if err != nil {
 		log.Println("No .env file")
 	}
-	env := os.Getenv(constants.Env)
 	serverPort := os.Getenv(constants.ServerPort)
 	if serverPort == "" {
 		serverPort = "8080"
 	}
 
-	var connString string
-	if env == "dev" {
-		connString = os.Getenv(constants.LocalConnString)
-	} else {
-		connString = os.Getenv(constants.ConnString)
-	}
+	connString := os.Getenv(constants.ConnString)
 	logger.Debug.Println("connstring", connString, serverPort)
 
 	conn := database.GetDb(connString)
