@@ -25,8 +25,9 @@ func initUserService(conn *pgx.Conn) {
 	}
 }
 
+// CreateUser creates a user in the database if not exists
 func (us *UserService) CreateUser(name string, sub string) error {
-	_, err := us.conn.Exec(context.Background(), `INSERT INTO users ("name", "google_id") VALUES ($1, $2)`, name, sub)
+	_, err := us.conn.Exec(context.Background(), `INSERT INTO users ("name", "google_id") VALUES ($1, $2) ON CONFLICT DO NOTHING`, name, sub)
 	if err != nil {
 		return errors.New("unable to create user")
 	}

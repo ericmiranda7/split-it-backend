@@ -32,7 +32,6 @@ func (ac *AccountController) GetAccountHandler(w http.ResponseWriter, r *http.Re
 	// todo(): extract user from request
 	user := models.User{Name: "Eric"}
 
-	println("am fine")
 	owe := ac.accountService.GetTotalOwe(user)
 
 	w.WriteHeader(http.StatusOK)

@@ -53,6 +53,7 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 	// create the user in db
 	err = ac.us.CreateUser(name, sub)
 	if err != nil {
+		logger.Error.Println("Couldn't create user due to", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
