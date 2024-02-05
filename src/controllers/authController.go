@@ -1,32 +1,36 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"net/http"
+	"os"
+	"split-that.com/split-that/v2/src/constants"
 	"split-that.com/split-that/v2/src/logger"
 	"split-that.com/split-that/v2/src/service"
 )
 
 type AuthController struct {
 	as *service.AuthService
+	us *service.UserService
 }
 
 var authController *AuthController
 
-func GetAuthController(as *service.AuthService) *AuthController {
+func GetAuthController(as *service.AuthService, us *service.UserService) *AuthController {
 	if authController == nil {
-		authController = initializeAuthController(as)
+		authController = initializeAuthController(as, us)
 	}
 
 	return authController
 }
 
-func initializeAuthController(as *service.AuthService) *AuthController {
-	return &AuthController{as: as}
+func initializeAuthController(as *service.AuthService, us *service.UserService) *AuthController {
+	return &AuthController{as: as, us: us}
 }
 
 func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request) {
+	// todo(): probably validate the token from google
 	jwtToken := r.FormValue("credential")
 	token, _, err := new(jwt.Parser).ParseUnverified(jwtToken, jwt.MapClaims{})
 
@@ -35,14 +39,30 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		logger.Info.Println("Name is", claims["name"])
-	} else {
-		log.Printf("Invalid JWT Token", claims, ok)
+	var claims jwt.MapClaims
+	var ok bool
+	if claims, ok = token.Claims.(jwt.MapClaims); !ok {
+		logger.Error.Println("Invalid JWT token")
 		http.Error(w, "Invalid JWT Token", http.StatusUnauthorized)
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write([]byte(`{"status": "success", "user": {...}}`))
+
+	name := claims["name"].(string)
+	sub := claims["sub"].(string)
+
+	// create the user in db
+	err = ac.us.CreateUser(name, sub)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// redirect back to frontend
+	// todo(): prolly generate and sign your own token for the frontend?
+	w.Header().Set("Location", os.Getenv(constants.FrontendRedirectURL)+fmt.Sprintf("login?token=%s&name=%s", jwtToken, name))
+
+	w.WriteHeader(http.StatusSeeOther)
+
 	if err != nil {
 		return
 	}

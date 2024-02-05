@@ -11,10 +11,11 @@ func InitHandlers(handlers []http.Handler) {
 	http.Handle("/api/health", NecessaryMiddleware(http.HandlerFunc(healthHandler)))
 	http.Handle("/", NecessaryMiddleware(http.HandlerFunc(rootHandler)))
 
-	http.Handle("/api/user", NecessaryMiddleware(handlers[0]))
-	http.Handle("/api/accounts/", NecessaryMiddleware(handlers[1]))
-	http.Handle("/api/auth", NecessaryMiddleware(handlers[2]))
+	http.Handle("/api/accounts/", NecessaryMiddleware(handlers[0]))
+	http.Handle("/api/auth", NecessaryMiddleware(handlers[1]))
 }
+
+// todo(eric): token parsing middleware
 
 func NecessaryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

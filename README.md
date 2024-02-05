@@ -11,7 +11,9 @@ LOCAL_PG_CONN_STRING= # eg. "postgres://postgres:postgres@localhost:5435/splitth
 2. Run the following commands
 ```shell
 $ git clone git@github.com:ericmiranda7/split-it-frontend.git
-$ go run .
+$ go mod tidy
+$ go install github.com/cosmtrek/air@latest # a lovely livereload server
+$ air
 ```
 
 ## Running in the cloud

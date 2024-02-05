@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -24,10 +25,10 @@ func initUserService(conn *pgx.Conn) {
 	}
 }
 
-func (us *UserService) CreateUser(name string) (bool, error) {
-	_, err := us.conn.Exec(context.Background(), "INSERT INTO users (\"name\") VALUES ($1)", name)
+func (us *UserService) CreateUser(name string, sub string) error {
+	_, err := us.conn.Exec(context.Background(), `INSERT INTO users ("name", "google_id") VALUES ($1, $2)`, name, sub)
 	if err != nil {
-		return false, err
+		return errors.New("unable to create user")
 	}
-	return true, nil
+	return nil
 }

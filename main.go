@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	// todo(eric): get that us,as,ac names shiz refactored properly
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("No .env file")
@@ -34,13 +35,11 @@ func main() {
 
 	conn := database.GetDb(connString)
 	us := service.GetUserService(conn)
-	uc := controllers.GetUserController(us)
 	as := service.GetAccountService(conn)
 	ac := controllers.GetAccountController(as)
 	authS := service.GetAuthService()
-	authC := controllers.GetAuthController(authS)
+	authC := controllers.GetAuthController(authS, us)
 	var handlers []http.Handler
-	handlers = append(handlers, http.HandlerFunc(uc.UserHandler))
 	handlers = append(handlers, http.HandlerFunc(ac.GetAccountHandler))
 	handlers = append(handlers, http.HandlerFunc(authC.GetOauthHandler))
 	controllers.InitHandlers(handlers)
