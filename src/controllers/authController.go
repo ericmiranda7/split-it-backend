@@ -53,14 +53,18 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 	authCookie := &http.Cookie{
 		Name:     "auth",
 		Value:    jwtToken,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
 	}
 	nameCookie := &http.Cookie{
 		Name:     "name",
 		Value:    name,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
 	}
 	http.SetCookie(w, authCookie)
 	http.SetCookie(w, nameCookie)
