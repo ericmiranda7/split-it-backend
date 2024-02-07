@@ -57,6 +57,7 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
+		Domain:   os.Getenv(constants.FrontendRedirectURL),
 	}
 	nameCookie := &http.Cookie{
 		Name:     "name",
@@ -65,6 +66,7 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
+		Domain:   os.Getenv(constants.FrontendRedirectURL),
 	}
 	http.SetCookie(w, authCookie)
 	http.SetCookie(w, nameCookie)
