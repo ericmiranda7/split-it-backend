@@ -50,27 +50,8 @@ func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request
 
 	// redirect back to frontend
 	// todo(): prolly generate and sign your own token for the frontend?
-	authCookie := &http.Cookie{
-		Name:     "auth",
-		Value:    jwtToken,
-		SameSite: http.SameSiteNoneMode,
-		Path:     "/",
-		Secure:   true,
-		HttpOnly: true,
-		Domain:   os.Getenv(constants.FrontendRedirectURL),
-	}
-	nameCookie := &http.Cookie{
-		Name:     "name",
-		Value:    name,
-		SameSite: http.SameSiteNoneMode,
-		Path:     "/",
-		Secure:   true,
-		HttpOnly: true,
-		Domain:   os.Getenv(constants.FrontendRedirectURL),
-	}
-	http.SetCookie(w, authCookie)
-	http.SetCookie(w, nameCookie)
-	redirectUrl := os.Getenv(constants.FrontendRedirectURL) + fmt.Sprintf("/login?name=%s&redirect=true", name)
+	redirectUrl := os.Getenv(constants.FrontendRedirectURL) +
+		fmt.Sprintf("/login?name=%s&redirect=true&token=%s", name, jwtToken)
 	http.Redirect(w, r, redirectUrl, http.StatusSeeOther)
 
 	if err != nil {
