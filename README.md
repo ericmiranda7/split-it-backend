@@ -15,6 +15,7 @@ $ go mod tidy
 $ go install github.com/cosmtrek/air@latest # a lovely livereload server
 $ air
 ```
+ lol
 
 ## Running in the cloud
 ### Compute
