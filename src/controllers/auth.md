@@ -6,4 +6,4 @@
 4. Backend processes the said token and extracts required info from it
 5. Ideally the backend would sign and send back its own jwt token which would henceforth be included in all frontend requests. But currently the same token is sent back to frontend
 6. Once the user is created / verified the backend redirects to frontend/login and sets a cookie named `auth` with value as jwt
-7. henceforth the cookie is sent with every frontend request (where necessary)
+7. henceforth an Authorization header is sent with every frontend request with `Bearer {token}`
