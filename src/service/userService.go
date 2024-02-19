@@ -33,3 +33,16 @@ func (us *UserService) CreateUser(name string, sub string) error {
 	}
 	return nil
 }
+
+func (us *UserService) ValidUser(sub string) bool {
+	println("sub", sub)
+	row := us.conn.QueryRow(context.Background(), `SELECT google_id FROM users WHERE google_id = $1`, sub)
+
+	var dbSub string
+	err := row.Scan(&dbSub)
+	if err != nil {
+		return false
+	}
+
+	return true
+}

@@ -11,22 +11,21 @@ import (
 )
 
 type AuthController struct {
-	as *service.AuthService
 	us *service.UserService
 }
 
 var authController *AuthController
 
-func GetAuthController(as *service.AuthService, us *service.UserService) *AuthController {
+func GetAuthController(us *service.UserService) *AuthController {
 	if authController == nil {
-		authController = initializeAuthController(as, us)
+		authController = initializeAuthController(us)
 	}
 
 	return authController
 }
 
-func initializeAuthController(as *service.AuthService, us *service.UserService) *AuthController {
-	return &AuthController{as: as, us: us}
+func initializeAuthController(us *service.UserService) *AuthController {
+	return &AuthController{us: us}
 }
 
 func (ac *AuthController) GetOauthHandler(w http.ResponseWriter, r *http.Request) {
