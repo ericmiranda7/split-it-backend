@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	// todo(eric): get that us,as,ac names shiz refactored properly
+	// todo(eric): get that us,as,accountController names shiz refactored properly
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("No .env file")
@@ -30,12 +30,13 @@ func main() {
 	conn := database.GetDb(connString)
 	us := service.GetUserService(conn)
 	as := service.GetAccountService(conn)
-	ac := controllers.GetAccountController(as)
+	accountController := controllers.GetAccountController(as)
 	authC := controllers.GetAuthController(us)
 	rootC := controllers.GetRootController(us)
 	var handlers []http.Handler
-	handlers = append(handlers, http.HandlerFunc(ac.GetAccountHandler))
+	handlers = append(handlers, http.HandlerFunc(accountController.GetAccountHandler))
 	handlers = append(handlers, http.HandlerFunc(authC.GetOauthHandler))
+
 	rootC.InitHandlers(handlers)
 
 	fmt.Println("Running server on port:", serverPort)

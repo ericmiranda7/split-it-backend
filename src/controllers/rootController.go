@@ -15,22 +15,26 @@ type RootController struct {
 
 var rootController *RootController
 
+func GetRootController(us *service.UserService) *RootController {
+	if rootController == nil {
+		initRootController(us)
+	}
+	return rootController
+}
+
 func initRootController(us *service.UserService) {
 	rootController = &RootController{userService: us}
 }
 
 func (rc *RootController) InitHandlers(handlers []http.Handler) {
-	// todo(eric): diff between get, post, put?
-
-	http.Handle("/api/health", rc.necessaryMiddleware(http.HandlerFunc(rc.healthHandler)))
 	http.Handle("/", rc.necessaryMiddleware(http.HandlerFunc(rc.rootHandler)))
+	http.Handle("GET /api/health", rc.necessaryMiddleware(http.HandlerFunc(rc.healthHandler)))
 
-	http.Handle("/api/accounts/", rc.authTokenExtractMiddleware(rc.necessaryMiddleware(handlers[0])))
+	http.Handle("GET /api/accounts/", rc.authTokenExtractMiddleware(rc.necessaryMiddleware(handlers[0])))
 	http.Handle("/api/auth", rc.necessaryMiddleware(handlers[1]))
 }
 
-// todo(eric): token parsing middleware
-
+// necessaryMiddleware Adds metadata to requests required by all requests
 func (rc *RootController) necessaryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info.Println("Received request at", r.URL)
@@ -42,6 +46,7 @@ func (rc *RootController) necessaryMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// authTokenExtractMiddleware extracts the bearer token from the request header
 func (rc *RootController) authTokenExtractMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Debug.Println("Extracting auth token from header")
@@ -92,11 +97,4 @@ func (rc *RootController) rootHandler(w http.ResponseWriter, _ *http.Request) {
 	if err != nil {
 		logger.Error.Println(err)
 	}
-}
-
-func GetRootController(us *service.UserService) *RootController {
-	if rootController == nil {
-		initRootController(us)
-	}
-	return rootController
 }
