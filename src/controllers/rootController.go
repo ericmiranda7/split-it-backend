@@ -27,11 +27,11 @@ func initRootController(us *service.UserService) {
 }
 
 func (rc *RootController) InitHandlers(handlers []http.Handler) {
-	http.Handle("/", rc.necessaryMiddleware(http.HandlerFunc(rc.rootHandler)))
+	http.Handle("OPTIONS /", rc.necessaryMiddleware(http.HandlerFunc(rc.rootHandler)))
 	http.Handle("GET /api/health", rc.necessaryMiddleware(http.HandlerFunc(rc.healthHandler)))
 
-	http.Handle("GET /api/accounts/", rc.authTokenExtractMiddleware(rc.necessaryMiddleware(handlers[0])))
-	http.Handle("/api/auth", rc.necessaryMiddleware(handlers[1]))
+	http.Handle("GET /api/accounts", rc.necessaryMiddleware(rc.authTokenExtractMiddleware(handlers[0])))
+	http.Handle("POST /api/auth", rc.necessaryMiddleware(handlers[1]))
 }
 
 // necessaryMiddleware Adds metadata to requests required by all requests
@@ -40,7 +40,8 @@ func (rc *RootController) necessaryMiddleware(next http.Handler) http.Handler {
 		logger.Info.Println("Received request at", r.URL)
 		// TODO(eric): be strict
 		w.Header().Set("Access-Control-Allow-Origin", os.Getenv(constants.FrontendRedirectURL))
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
 
 		next.ServeHTTP(w, r)
 	})
@@ -70,6 +71,10 @@ func (rc *RootController) authTokenExtractMiddleware(next http.Handler) http.Han
 			logger.Debug.Println("Unable to parse token")
 			http.Error(w, "Unable to parse token", http.StatusUnauthorized)
 			return
+			_, err := w.Write([]byte("Hmm, not quite sure what you're looking for here."))
+			if err != nil {
+				logger.Error.Println(err)
+			}
 		}
 
 		sub := claims["sub"].(string)
@@ -92,9 +97,6 @@ func (rc *RootController) healthHandler(w http.ResponseWriter, _ *http.Request) 
 }
 
 func (rc *RootController) rootHandler(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	_, err := w.Write([]byte("Hmm, not quite sure what you're looking for here."))
-	if err != nil {
-		logger.Error.Println(err)
-	}
+	// make cors happy happy
+	w.WriteHeader(http.StatusOK)
 }
