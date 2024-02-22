@@ -71,14 +71,11 @@ func (rc *RootController) authTokenExtractMiddleware(next http.Handler) http.Han
 			logger.Debug.Println("Unable to parse token")
 			http.Error(w, "Unable to parse token", http.StatusUnauthorized)
 			return
-			_, err := w.Write([]byte("Hmm, not quite sure what you're looking for here."))
-			if err != nil {
-				logger.Error.Println(err)
-			}
 		}
 
 		sub := claims["sub"].(string)
 
+		// validate request token with db token
 		if !rc.userService.ValidUser(sub) {
 			logger.Debug.Println("No such subject (google_id) exists in db")
 			return
