@@ -1,5 +1,9 @@
 package main
 
+import (
+	"github.com/google/uuid"
+)
+
 func main() {
-	println("hi")
+	println("hi mr. ", uuid.New().String())
 }
