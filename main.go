@@ -1,9 +1,10 @@
 package main
 
-import (
-	"github.com/google/uuid"
-)
+import "os"
 
 func main() {
-	println("hi mr. ", uuid.New().String())
+	err := runServer()
+	if err != nil {
+		os.Exit(1)
+	}
 }
