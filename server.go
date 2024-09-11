@@ -27,8 +27,8 @@ func runServer() error {
 func NewServer(logger *log.Logger, userStore []string) http.Handler {
 	mux := http.NewServeMux()
 
-	balHandler := http.HandlerFunc(handleBalance)
 	// handlers
+	balHandler := http.HandlerFunc(handleBalance)
 	mux.Handle("GET /balance", balHandler)
 	mux.Handle("POST /users", handleCreateUser(&userStore, logger))
 	mux.Handle("GET /users", handleReadUser(&userStore))
