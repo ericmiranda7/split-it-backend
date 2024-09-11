@@ -29,7 +29,7 @@ func NewServer(logger *log.Logger, userStore []string) http.Handler {
 
 	balHandler := http.HandlerFunc(handleBalance)
 	// handlers
-	mux.Handle("/balance", balHandler)
+	mux.Handle("GET /balance", balHandler)
 	mux.Handle("POST /users", handleCreateUser(&userStore, logger))
 	mux.Handle("GET /users", handleReadUser(&userStore))
 
